@@ -16,7 +16,7 @@ def showarray(a):
     a = np.uint8(np.clip(a, 0, 255))
     f = StringIO()
     millis = int(round(time.time() * 1000))
-    filename = "/data/output/tmp/steps-%i.jpg" % millis
+    filename = "/nas/output/tmp/steps-%i.jpg" % millis
     PIL.Image.fromarray(np.uint8(a)).save(filename)
 
 input_file = os.getenv('INPUT', 'input.png')
@@ -35,7 +35,7 @@ except ValueError:
 model_name = os.getenv('MODEL', 'inception_4c/output')
 print "Processing file: " + input_file
 
-img = np.float32(PIL.Image.open('/data/%s' % input_file))
+img = np.float32(PIL.Image.open('/nas/test/%s' % input_file))
 
 model_path = '/caffe/models/bvlc_googlenet/' # substitute your path here
 net_fn   = model_path + 'deploy.prototxt'
@@ -121,20 +121,20 @@ def verifyModel(net, model):
 if not verifyModel(net, model_name):
     os._exit(1)
 
-if not os.path.exists("/data/output"):
-  os.mkdir("/data/output")
+if not os.path.exists("/nas/output"):
+  os.mkdir("/nas/output")
 
-if not os.path.exists("/data/output/tmp"):
-  os.mkdir("/data/output/tmp")
+if not os.path.exists("/nas/output/tmp"):
+  os.mkdir("/nas/output/tmp")
 
 print "This might take a little while..."
 print "Generating first sample..."
 step_one = deepdream(net, img)
-PIL.Image.fromarray(np.uint8(step_one)).save("/data/output/step_one.jpg")
+PIL.Image.fromarray(np.uint8(step_one)).save("/nas/output/step_one.jpg")
 
 print "Generating second sample..."
 step_two = deepdream(net, img, end='inception_3b/5x5_reduce')
-PIL.Image.fromarray(np.uint8(step_two)).save("/data/output/step_two.jpg")
+PIL.Image.fromarray(np.uint8(step_two)).save("/nas/output/step_two.jpg")
 
 frame = img
 frame_i = 0
