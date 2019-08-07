@@ -19,10 +19,11 @@ def showarray(a):
     filename = "/nas/output/%s/tmp/steps-%i.jpg" % (num_index, millis)
     PIL.Image.fromarray(np.uint8(a)).save(filename)
 
+
 input_file = os.getenv('INPUT', 'input.png')
 iterations = os.getenv('ITER', 50)
 num_index = os.getenv('NUM')
-print 'index ' + num_index
+print 'index %s' % num_index
 try:
     iterations = int(iterations)
 except ValueError:
