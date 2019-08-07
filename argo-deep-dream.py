@@ -126,11 +126,11 @@ if not verifyModel(net, model_name):
 
 tmpPath = "/nas/output/%s" % num_index
 if not os.path.exists(tmpPath):
-  os.mkdir(tmpPath)
+  os.makedirs(tmpPath)
 
 tmpPath2 = "/nas/output/%s/tmp" % num_index
 if not os.path.exists(tmpPath2):
-  os.mkdir(tmpPath2)
+  os.makedirs(tmpPath2)
 
 print "This might take a little while..."
 print "Generating first sample..."
