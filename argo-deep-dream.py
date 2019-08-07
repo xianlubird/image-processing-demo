@@ -16,11 +16,13 @@ def showarray(a):
     a = np.uint8(np.clip(a, 0, 255))
     f = StringIO()
     millis = int(round(time.time() * 1000))
-    filename = "/nas/output/tmp/steps-%i.jpg" % millis
+    filename = "/nas/output/%s/tmp/steps-%i.jpg" % (num_index, millis)
     PIL.Image.fromarray(np.uint8(a)).save(filename)
 
 input_file = os.getenv('INPUT', 'input.png')
 iterations = os.getenv('ITER', 50)
+num_index = os.getenv('NUM')
+print 'index ' + num_index
 try:
     iterations = int(iterations)
 except ValueError:
@@ -121,20 +123,24 @@ def verifyModel(net, model):
 if not verifyModel(net, model_name):
     os._exit(1)
 
-if not os.path.exists("/nas/output"):
-  os.mkdir("/nas/output")
+tmpPath = "/nas/output/%s" % num_index
+if not os.path.exists(tmpPath):
+  os.mkdir(tmpPath)
 
-if not os.path.exists("/nas/output/tmp"):
-  os.mkdir("/nas/output/tmp")
+tmpPath2 = "/nas/output/%s/tmp" % num_index
+if not os.path.exists(tmpPath2):
+  os.mkdir(tmpPath2)
 
 print "This might take a little while..."
 print "Generating first sample..."
 step_one = deepdream(net, img)
-PIL.Image.fromarray(np.uint8(step_one)).save("/nas/output/step_one.jpg")
+tmpPath3 = "/nas/output/%s/step_one.jpg" % num_index
+PIL.Image.fromarray(np.uint8(step_one)).save(tmpPath3)
 
 print "Generating second sample..."
 step_two = deepdream(net, img, end='inception_3b/5x5_reduce')
-PIL.Image.fromarray(np.uint8(step_two)).save("/nas/output/step_two.jpg")
+tmpPath4 = "/nas/output/%s/step_two.jpg" % num_index
+PIL.Image.fromarray(np.uint8(step_two)).save(tmpPath4)
 
 frame = img
 frame_i = 0
@@ -148,7 +154,8 @@ print "Model = %s" % model_name
 for i in xrange(int(iterations)):
     print "Step %d of %d is starting..." % (i, int(iterations))
     frame = deepdream(net, frame, end=model_name)
-    PIL.Image.fromarray(np.uint8(frame)).save("/data/output/%04d.jpg"%frame_i)
+    tmpPath5 = "/nas/output/%s/%04d.jpg" % (num_index, frame_i)
+    PIL.Image.fromarray(np.uint8(frame)).save(tmpPath5)
     frame = nd.affine_transform(frame, [1-s,1-s,1], [h*s/2,w*s/2,0], order=1)
     frame_i += 1
     print "Step %d of %d is complete." % (i, int(iterations))
